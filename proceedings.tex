@@ -72,34 +72,44 @@
 % End of preamble. Here it comes the document.
 \begin{document}
 
-\title{SIGCHI Conference Proceedings Format}
+\title{BehaviorSim Model Builder: Lessons Learned Designing for JiTAI Developers}
 
 \numberofauthors{3}
 \author{%
-  \alignauthor{1st Author Name\\
-    \affaddr{Affiliation}\\
-    \affaddr{City, Country}\\
-    \email{e-mail address}}\\
-  \alignauthor{2nd Author Name\\
-    \affaddr{Affiliation}\\
-    \affaddr{City, Country}\\
-    \email{e-mail address}}\\
-  \alignauthor{3rd Author Name\\
-    \affaddr{Affiliation}\\
-    \affaddr{City, Country}\\
-    \email{e-mail address}}\\
+  \alignauthor{Tylar Murray \\
+    \affaddr{University of South Florida}\\% Department of Electrical Engineering}\\
+    \affaddr{Tampa, USA}\\
+    \email{tylarmurray@mail.usf.edu}\\
+    }
+  \alignauthor{Eric Hekler\\
+    \affaddr{Arizona State University}\\% School of Nutrition and Health Promotion}\\
+    \affaddr{Phoenix, USA}\\
+    %\email{e-mail address}
+    }
+  \alignauthor{Donna Spruijt-Metz \\
+    \affaddr{University of Southern California}\\% Center for Economic and Social Research}\\
+    \affaddr{ Los Angeles, USA}\\
+    %\email{e-mail address}\\
+    }
+  \alignauthor{Daniel Rivera \\
+    \affaddr{Arizona State University}\\% Control Systems Engineering Laboratory}\\
+    \affaddr{Phoenix, USA}\\
+    %\email{e-mail address}\\
+    }
+  \alignauthor{Andrew Raij \\
+    \affaddr{University of Central Florida}\\% Institute for Simulation and Training}\\
+    \affaddr{Orlando, USA}\\
+    %\email{e-mail address}\\
+    }
 }
+
 
 \maketitle
 
 \begin{abstract}
-  UPDATED---\today. This sample paper describes the
-  formatting requirements for SIGCHI conference proceedings, and
-  offers recommendations on writing for the worldwide SIGCHI
-  readership. Please review this document even if you have submitted
-  to SIGCHI conferences before, as some format details have changed
-  relative to previous years. Abstracts should be about 150 words and
-  are required.
+In this paper we present design considerations relevant to the development of software for behavioral scientists developing Just-in-Time-Adaptive-Interventions (JiTAIs). 
+Our findings are based off of a user-survey, expert-panel reviews, and UX interviews performed in development of the BehaviorSim model-building tool. 
+Lessons learned through iterations of this tool, a JiTAI developer user persona, and guidelines for those targeting behavioral scientists are highlighted. 
 \end{abstract}
 
 \keywords{Authors' choice; of terms; separated; by semi\-colons;
@@ -111,327 +121,214 @@
   classifiers. This section is required.}{}{}
 
 \section{Introduction}
+% JiTAIs?
+% * what is the problem with current behavioral science research methods?
+With the increasing prevalence of wearable technologies and user-behavior collection, behavioral researchers are becoming increasingly overwhelmed with data.
+Researchers have seen the potential for optimizing a behavioral intervention to suit not only the user \cite{beck2010}, but also the context \cite{brailsford2010towards, collins2004}. 
+Just-in-Time Adaptive Interventions (JiTAIs) promise to provide the optimal nudge at the optimal time to aid users looking to change their behavior \cite{nahum2014}.
+Imagine, for example, an anti-stress app which knows not to interrupt your work meetings, but also knows when to play your favorite song to help you relax on the drive home.
+Or consider a smoking cessation app that knows precisely when and where you are most likely to crave, and distracts you with a game before you realize you were about to want a cigarette.
 
-This format is to be used for submissions that are published in the
-conference proceedings. We wish to give this volume a consistent,
-high-quality appearance. We therefore ask that authors follow some
-simple guidelines. You should format your paper exactly like this
-document. The easiest way to do this is to replace the content with
-your own material.  This document describes how to prepare your
-submissions using \LaTeX.
+The impending wave of context-aware\cite{schilit1994context}, affective computing\cite{picard2000affective} applications seems to be the holy grail of behavior change, but researchers are finding that our models of human behavior are not capable of supporting this level of interaction.
+Traditional models of behavior do not offer the granularity and specificity needed for these applications\cite{riley2011health}.
+Existing psychological models of human behavior act as a guide for behavioral scientists looking to predict behavior, but are rarely computational in nature - making their application to adaptive systems impossible.
+However, methods for creating computational models of human behavior are not well defined, but some early concepts have been published.
 
-\section{Page Size and Columns}
-On each page your material should fit within a rectangle of 7 $\times$
-9.25 inches (18 $\times$ 23.5 cm), centered on a US Letter page (8.5
-$\times$ 11 inches), beginning 0.75 inches (1.9 cm) from the top of
-the page, with a 0.33 inches (0.85 cm) space between two 3.3 inches
-(8.4 cm) columns. Right margins should be justified, not
-ragged. Please be sure your document and PDF are US letter and not A4.
+% TODO: ADD THESE?:
+% b/c of ubiquitous mobile & sensor tech
+%    dynamical systems are good way to model at this level
+
+\section{User Surveys}
+% SBM Survey 
+A preliminary survey was given to a group of behavioral scientists in order to gauge the general perceptions and opinions on the development of behavioral models to support JiTAIs.
+In this survey we focused on a few key elements of the model building process to greatly simplify and shorten the modeling exercise.
+A context and behavioral outcome based on physical activity were given, and users efforts were focused on defining the inner workings of the human system within these constraints.
+We also asked to complete several survey items about the barriers keeping modeling and simulation out of behavioral science.
+Approximately 50 surveys were distributed following presentations on behavioral modeling and simulation at the 35th Annual Conference of the Society of Behavioral Medicine. 
+Out of these 50, only 12 surveys were returned.
+In general, users still had trouble with modeling exercise.
+Most did not stray far from the given example, and others provided very different solutions which do not fit the ``engineer's view'' of the problem.
+In the survey questions participants reported that the mathematics and programming concepts required for developing simulatable models were overwhelming, and nearly all participants expressed a desire for increased collaboration between disciplines and a need for software tools to help them apply and validate these methods.
 
 
-\section{Typeset Text}
-The styles contained in this document have been modified from the
-default styles to reflect ACM formatting conventions. For example,
-content paragraphs like this one are formatted using the Normal style.
+% behaviorSim model-builder v1
+Using findings from the user study we developed a proof-of-concept software to aid behavioral researchers with the task of building a computational behavioral model. 
+The software - called the behaviorSim Model-Builder (see figure \ref{model-builder-v1}) - took a step-wise approach towards the model-building process.
+First users are asked to list environmental inflows, internal state variables, and behavioral outflows of the model explicitly during the ``think'' stage.
+Next users are prompted to define the connections between nodes, ``draw''ing the model's structure.
+Lastly, users are required to ``specify'' the functional relationships at each node's inflow(s).
+% TODO: include graphic which shows context/state/behavioral as mentioned in P above?
 
-
-\LaTeX\ sometimes will create overfull lines that extend into columns.
-To attempt to combat this, the \texttt{.cls} file has a command,
-\texttt{{\textbackslash}sloppy}, that essentially asks \LaTeX\ to
-prefer underfull lines with extra whitespace.  For more details on
-this, and info on how to control it more finely, check out
-{\url{http://www.economics.utoronto.ca/osborne/latex/PMAKEUP.HTM}}.
-
-\subsection{Title and Authors}
-
-Your paper's title, authors and affiliations should run across the
-full width of the page in a single column 17.8 cm (7 in.) wide.  The
-title should be in Helvetica or Arial 18-point bold.  Authors' names
-should be in Times New Roman or Times Roman 12-point bold, and
-affiliations in 12-point regular.  
-
-See \texttt{{\textbackslash}author} section of this template for
-instructions on how to format the authors. For more than three
-authors, you may have to place some address information in a footnote,
-or in a named section at the end of your paper. Leave one 10-point
-line of white space below the last line of affiliations.
-
-\subsection{Abstract and Keywords}
-
-Every submission should begin with an abstract of about 150 words,
-followed by a set of Author Keywords and ACM Classification
-Keywords. The abstract and keywords should be placed in the left
-column of the first page under the left half of the title. The
-abstract should be a concise statement of the problem, approach, and
-conclusions of the work described. It should clearly state the paper's
-contribution to the field of HCI\@.
-
-\subsection{Normal or Body Text}
-
-Please use a 10-point Times New Roman or Times Roman font or, if this
-is unavailable, another proportional font with serifs, as close as
-possible in appearance to Times Roman 10-point. Other than Helvetica
-or Arial headings, please use sans-serif or non-proportional fonts
-only for special purposes, such as source code text.
-
-\subsection{First Page Copyright Notice}
-This template include a sample ACM copyright notice at the bottom of
-page 1, column 1.  Upon acceptance, you will be provided with the
-appropriate copyright statement and unique DOI string for publication.
-Accepted papers will be distributed in the conference
-publications. They will also be placed in the ACM Digital Library,
-where they will remain accessible to thousands of researchers and
-practitioners worldwide. See
-\url{http://acm.org/publications/policies/copyright_policy} for the
-ACM’s copyright and permissions policy.
-
-%%%
-
-\subsection{Subsequent Pages}
-
-On pages beyond the first, start at the top of the page and continue
-in double-column format.  The two columns on the last page should be
-of equal length.
-
-\begin{figure}
-\centering
-  \includegraphics[width=0.9\columnwidth]{figures/sigchi-logo}
-  \caption{Insert a caption below each figure. Do not alter the
-    Caption style.}~\label{fig:figure1}
+\begin{figure}[!t]
+  \centering
+  1 
+  \includegraphics[width=0.9\columnwidth]{img/v1-think}
+  \rule{\columnwidth}{0.4pt}
+  2
+  \includegraphics[width=0.9\columnwidth]{img/v1-draw}
+  \rule{\columnwidth}{0.4pt}
+  3
+  \includegraphics[width=0.9\columnwidth]{img/v1-specify}  
+  \caption{behaviorSim Model Builder v0.1.x implemented three separate stages of model building as separate pages: 1) think, 2) draw, 3) specify.}
+  \label{model-builder-v1}
 \end{figure}
 
-\subsection{References and Citations}
+The model builder was tested using a think-aloud protocol with 2 behavioral scientists and 1 HCI expert. 
+Though the steps in the outlined model development process seemed appropriate, it quickly became obvious that a step-wise design is not optimal.
+Users who are forced to explore the process step-by-step have difficulty understanding how earlier choices related to later results, and feel constrained by previous choices rather than backtracking to revise the model.
+This design does not allow for quick iteration on models, and requires the user to maintain a great deal of planning information internally.
+% Though the information flow diagram employed in this version worked well to convey information about the model to the users, the graph was also assumed to be interactive - participants made attempts to modify the graph by clicking, and attempted to select nodes in the specification stage by clicking on them.
+Our review concluded that a less constrained approach to the stages of the modeling process was needed, and a greater focus on the graphical model could greatly improve user experience.
 
-Use a numbered list of references at the end of the article, ordered
-alphabetically by last name of first author, and referenced by numbers
-in
-brackets~\cite{acm_categories,ethics,Klemmer:2002:WSC:503376.503378}.
-Your references should be published materials accessible to the
-public. Internal technical reports may be cited only if they are
-easily accessible (i.e., you provide the address for obtaining the
-report within your citation) and may be obtained by any reader for a
-nominal fee. Proprietary information may not be cited. Private
-communications should be acknowledged in the main text, not referenced
-(e.g., ``[Borriello, personal communication]'').
+% \subsection{behaviorSim Model-Building Tutorial v1}
+After reviewing v1 of the behaviorSim Model Builder tool, a tutorial was designed to help bridge the knowledge gap for new modelers looking to use the tool.
+In theory, the tutorial would help users see the bigger picture before diving into the stepwise process.
+The tutorial was implemented as a walk-through of a simple model's internals.
+The tutorial also introduced a hybridized information-flow and time-series graph, wherein each node of the graph contains a time-series spanning a common time-frame, and a user interface for adjusting model parameters and updating time-series values instantaneously.
+This real-time parameter tweaking enables some degree of reconciliation with expectations of the data.
 
-References should be in ACM citation format:
-\url{http://acm.org/publications/submissions/latex_style}. This
-includes citations to internet
-resources~\cite{acm_categories,cavender:writing,CHINOSAUR:venue,psy:gangnam}
-according to ACM format, although it is often appropriate to include
-URLs directly in the text, as above.
+The same think-aloud protocol as used for the evaluation of v1 of the model builder was used to evaluate this tutorial. 
 
-
-% Use a numbered list of references at the end of the article, ordered
-% alphabetically by first author, and referenced by numbers in
-% brackets~\cite{ethics, Klemmer:2002:WSC:503376.503378,
-%   Mather:2000:MUT, Zellweger:2001:FAO:504216.504224}. For papers from
-% conference proceedings, include the title of the paper and an
-% abbreviated name of the conference (e.g., for Interact 2003
-% proceedings, use \textit{Proc. Interact 2003}). Do not include the
-% location of the conference or the exact date; do include the page
-% numbers if available. See the examples of citations at the end of this
-% document. Within this template file, use the \texttt{References} style
-% for the text of your citation.
-
-% Your references should be published materials accessible to the
-% public.  Internal technical reports may be cited only if they are
-% easily accessible (i.e., you provide the address for obtaining the
-% report within your citation) and may be obtained by any reader for a
-% nominal fee.  Proprietary information may not be cited. Private
-% communications should be acknowledged in the main text, not referenced
-% (e.g., ``[Robertson, personal communication]'').
-
-\begin{table}
+Through this evaluation it became clear that even more explicit definition of terms was needed in order to clarify persistent disciplinary differences.
+Reviewers also wanted better explanation of models' input parameters and of the functional definition of the system.
+They were not content with the hard-coded environmental inputs and wanted to be able to define how the contextual inflows changed over time.
+Though the hybrid graph was found helpful in conveying the connection between path diagram nodes and time series, the shared time-axis was not obvious, and reviewers expressed a need for more explicit x and y axes as well as a better explanation as to what ``10 units of self efficacy'' actually means.
+The time-series viewer was found to be both critical for the development of an accurate model, and valuable as pedagogical exercise for users trying to internalize model formulations.
+ 
+\begin{figure}[!t]
   \centering
-  \begin{tabular}{r c c}
-    \toprule
-    & \multicolumn{2}{c}{\small{\textbf{Caption}}} \\
-    \cmidrule(r){2-3}
-    {\small\textbf{Objects}}
-    & {\small \textit{Pre-2002}}
-    & {\small \textit{Current}} \\
-    \midrule
-    Tables & Above & Below \\
-    Figures & Below & Below \\
-    \bottomrule
-  \end{tabular}
-  \caption{Table captions should be placed below the table. We
-    recommend table lines be 1 point, 25\% black. Minimize use of
-    unnecessary table lines.}~\label{tab:table1}
-\end{table}
+  \includegraphics[width=0.9\columnwidth]{img/v1-flow}  
+  \caption{behaviorSim Model Builder tutorial attempted to merge time-series and information-flow graph representations.}
+  \label{model-builder-tutorial}
+\end{figure}
 
-\section{Sections}
+% \subsection{behaviorSim Model-Building Tool v2}
+In an attempt to apply what we had learned so far, the behaviorSim Model Building tool was re-designed and re-assessed.
+In this version all steps of the modeling process (figure \ref{model-builder-stages})  are unified into a single-page application, allowing users to see how choices influence the model in real-time, and thus can iterate on their design more easily.
+The time-series charts popular in the tutorial were also added as a ``mini-simulation'', to help users to visualize how variables change over time according to their model formulation.
+To address the terminology gap which plagued v1, a set of tool-tips were added which revealed detailed definitions for key terms used in the user interface.
+% In addition, the second version incorporates findings from the v1 tutorial, adding a ``miniature simulation'' to the application to allow for ``reconciliation and ``play''.
+In this version of the tool, users declare constructs and define the structure of their model simultaneously by specifying on the connections using a simple Diagram Specification Language (DSL). 
+In contrast to version 1, where the construct type had to be input by the user, the type of each node is inferred from the number of inflows and outflows.
 
-The heading of a section should be in Helvetica or Arial 9-point bold,
-all in capitals. Sections should \textit{not} be numbered.
+The ``miniature simulation'' concept allows users to specify hypothetical contexts in which to explore the model dynamics, without the need to specify the full model.
+Users can specify environmental inflows for the simulation, choosing from adjustable presets (square wave, step function, random walk, or constant value).
+Selecting nodes on the graph by clicking, users can traverse the graph in any order.
+Time-series plots of inflows as well as the resulting outflow at each node are provided using the miniature simulation model.
+Internal state and behavioral nodes are specified similarly to environmental inflows through customization of function presets such as ``linear combination'' and ``fluid flow analogy''\cite{martin2014dynamical}.
 
-\subsection{Subsections}
-
-Headings of subsections should be in Helvetica or Arial 9-point bold
-with initial letters capitalized.  For sub-sections and
-sub-subsections, a word like \emph{the} or \emph{of} is not
-capitalized unless it is the first word of the heading.
-
-\subsubsection{Sub-subsections}
-
-Headings for sub-subsections should be in Helvetica or Arial 9-point
-italic with initial letters capitalized.  Standard
-\texttt{{\textbackslash}section}, \texttt{{\textbackslash}subsection},
-and \texttt{{\textbackslash}subsubsection} commands will work fine in
-this template.
-
-\section{Figures/Captions}
-
-Place figures and tables at the top or bottom of the appropriate
-column or columns, on the same page as the relevant text (see
-Figure~\ref{fig:figure1}). A figure or table may extend across both
-columns to a maximum width of 17.78 cm (7 in.).
-
-\begin{figure*}
+\begin{figure}[!t]
   \centering
-  \includegraphics[width=2\columnwidth]{figures/map}
-  \caption{In this image, the map maximizes use of space. You can make
-    figures as wide as you need, up to a maximum of the full width of
-    both columns. Note that \LaTeX\ tends to render large figures on a
-    dedicated page. Image: \ccbynd~ayman on
-    Flickr.}~\label{fig:figure2}
-\end{figure*}
+  \includegraphics[width=0.9\columnwidth]{img/v2}  
+  \caption{behaviorSim Model Builder v2 combines the think, draw, specify, and play elements into a single view.}
+  \label{model-builder-v2}
+\end{figure}
 
-Captions should be Times New Roman or Times Roman 9-point bold.  They
-should be numbered (e.g., ``Table~\ref{tab:table1}'' or
-``Figure~\ref{fig:figure1}''), centered and placed beneath the figure
-or table.  Please note that the words ``Figure'' and ``Table'' should
-be spelled out (e.g., ``Figure'' rather than ``Fig.'') wherever they
-occur. Figures, like Figure~\ref{fig:figure2}, may span columns and
-all figures should also include alt text for improved accessibility.
-Papers and notes may use color figures, which are included in the page
-limit; the figures must be usable when printed in black-and-white in
-the proceedings.
+This version was used as part of a structured exercise and interview outlining the design of a JiTAI to combat obesity.
+The content of this exercise was based on recent work done to define the JiTAI design use-case \cite{Nahum-Shani2015}.
+Preliminary findings from this exercise completed with 4 behavioral researchers highlight both the strengths and the remaining weaknesses of our design.
+A think-aloud protocol was used while the software was in use, and the concluding interview gives insight to what users find most valuable, least valuable, and most in need of improvement.
 
-The paper may be accompanied by a short video figure up to five
-minutes in length. However, the paper should stand on its own without
-the video figure, as the video may not be available to everyone who
-reads the paper.  
+Though the single-page design of version two did seem to allow for increased ability to iteratively explore models, reviewers now found the user interface overwhelming at first.
+% Upon starting the review, users often felt unsure where to start.
+Furthermore the connection between the information flow graphic and the related UI elements below was not always obvious.
+% Reviewers did identify the relationship after some exploration, however. 
+The unification of construct specification interfaces in this design broke down the distinction between environmental inflows, state variables, and behavioral outputs. This lead to to some confusion when specifying the various types of nodes.
+Further contributing to this problem, the meaning of the mini-simulation was not always clear to reviewers, though the inclusion of time-series graphs was found helpful for understanding the model functions and their parameters once explained.
+Nodes on the graph were made to change color when the specification process was complete, but reviews revealed that this was not a significant enough indicator of node ``completeness'', so that the user is sometimes unsure when they should feel free to move to the next node.
+% Inclusion of a ``next node'' button which appears upon node specification completion may be all that is needed to help alleviate this issue.
 
-\subsection{Inserting Images}
-When possible, include a vector formatted graphic (i.e. PDF or EPS).
-When including bitmaps,  use an image editing tool to resize the image
-at the appropriate printing resolution (usually 300 dpi).
+\section{Results}
+Our findings above reveal specific flaws in our design, and through analysis of these findings we present the following design guidelines for software made to empower JiTAI developers.
+Firstly we outline a rough JiTAI developer user persona based on our assessment of the general population of researchers in behavioral intervention design.
+Next, we propose user stories and use-case details for the task of JiTAI design and evaluation.
+Lastly, we provide some generic design guidelines which we have found to be particularly relevant in this design space.
+% Please don't hate me too much for calling it a design ``space''
 
-\section{Language, Style and Content}
+\subsection{Who are JiTAI Developers?}
+% outline a rough JiTAI developer user persona based on our assessment of the general population of researchers in behavioral intervention design.
+In general, JiTAI developers are behavioral researchers who see the powerful potential of ubiquitous computing for high-frequency data collection, automated analysis, intervention deployment, and personalization.
+It is important to note that the research questions of a JiTAI researcher often differ significantly from the questions a behavioral scientist might typically have.
+% “old” way vs “new” way not valid
+The ``traditional'' way of modeling for behavior change relies primarily on statistical data analysis techniques to find relationships between variables on large time-scales.
+In contrast, the JiTAI researcher needs to translate these relationships into a small-time-scale model which provides guidance regarding which interventions are most effective at which specific time(s).
+% research questions have changed
+Research questions focusing on the detailed dynamics of behavioral change are becoming increasingly prevalent as mobile behavioral health research continues to grow.
 
-The written and spoken language of SIGCHI is English. Spelling and
-punctuation may use any dialect of English (e.g., British, Canadian,
-US, etc.) provided this is done consis- tently. Hyphenation is
-optional. To ensure suitability for an international audience, please
-pay attention to the following:
+% modeling turns story into equations
+The JiTAI developer wants to turn a patient story into a set of equations that can be handled by an automated system.
+However, JiTAI developers typically do not have the level of familiarity with modeling systems to define abstract psychological models mathematically.
+Furthermore, the psychological models commonly used are ill-specified at the timescales of greatest interest, and often do not fit commonly used modeling paradigms - making mathematical definition a unique challenge for even a systems engineer.
 
-\begin{itemize}
-\item Write in a straightforward style.
-\item Try to avoid long or complex sentence structures.
-\item Briefly define or explain all technical terms that may be
-  unfamiliar to readers.
-\item Explain all acronyms the first time they are used in your
-  text---e.g., ``Digital Signal Processing (DSP)''.
-\item Explain local references (e.g., not everyone knows all city
-  names in a particular country).
-\item Explain ``insider'' comments. Ensure that your whole audience
-  understands any reference whose meaning you do not describe (e.g.,
-  do not assume that everyone has used a Macintosh or a particular
-  application).
-\item Explain colloquial language and puns. Understanding phrases like
-  ``red herring'' may require a local knowledge of English.  Humor and
-  irony are difficult to translate.
-\item Use unambiguous forms for culturally localized concepts, such as
-  times, dates, currencies, and numbers (e.g., ``1--5--97'' or
-  ``5/1/97'' may mean 5 January or 1 May, and ``seven o'clock'' may
-  mean 7:00 am or 19:00). For currencies, indicate equivalences:
-  ``Participants were paid {\fontfamily{txr}\selectfont \textwon}
-  25,000, or roughly US \$22.''
-\item Be careful with the use of gender-specific pronouns (he, she)
-  and other gendered words (chairman, manpower, man-months). Use
-  inclusive language that is gender-neutral (e.g., she or he, they,
-  s/he, chair, staff, staff-hours, person-years). See the
-  \textit{Guidelines for Bias-Free Writing} for further advice and
-  examples regarding gender and other personal
-  attributes~\cite{Schwartz:1995:GBF}. Be particularly aware of
-  considerations around writing about people with disabilities.
-\item If possible, use the full (extended) alphabetic character set
-  for names of persons, institutions, and places (e.g.,
-  Gr{\o}nb{\ae}k, Lafreni\'ere, S\'anchez, Nguy\~{\^{e}}n,
-  Universit{\"a}t, Wei{\ss}enbach, Z{\"u}llighoven, \r{A}rhus, etc.).
-  These characters are already included in most versions and variants
-  of Times, Helvetica, and Arial fonts.
-\end{itemize}
+The JiTAI developer wants to deploy and test a hypothesis by comparing model predictions to experimental data.
+Statistical analysis techniques typically used to assess control vs experimental group differences are much less applicable to this problem, but the JiTAI developer often has little experience applying goodness-of-fit metrics.
 
-\section{Accessibility}
-The Executive Council of SIGCHI has committed to making SIGCHI
-conferences more inclusive for researchers, practitioners, and
-educators with disabilities. As a part of this goal, the all authors
-are asked to work on improving the accessibility of their
-submissions. Specifically, we encourage authors to carry out the
-following five steps:
-\begin{enumerate}
-\item Add alternative text to all figures
-\item Mark table headings
-\item Add tags to the PDF
-\item Verify the default language
-\item Set the tab order to ``Use Document Structure''
-\end{enumerate}
-For more information and links to instructions and resources, please
-see: \url{http://chi2016.acm.org/accessibility}.  The
-\texttt{{\textbackslash}hyperref} package allows you to create well tagged PDF files,
-please see the preamble of this template for an example.
+% NOTE: actually, I covered this a bit in the above section.
+% \subsection{What do JiTAI Developers Want?}
+% propose user stories and use-case details for the task of JiTAI design and  evaluation
+% First and foremost JiTAI developers want to 
 
-\section{Page Numbering, Headers and Footers}
-Your final submission should not contain footer or header information
-at the top or bottom of each page. Specifically, your final submission
-should not include page numbers. Initial submissions may include page
-numbers, but these must be removed for camera-ready. Page numbers will
-be added to the PDF when the proceedings are assembled.
+\subsection{Designing for JiTAI Developers}
+% provide some generic design guidelines which we have found to be particularly relevant in this design space
 
-\section{Producing and Testing PDF Files}
+\subsubsection{Promote Expertise Development}
+% information-seeking to aid learning of new concepts
+%     access new terminologies/concepts for describing/defining model
+%         existing model explorer to inspire/inform
+%         existing data explorer to inspire/inform
+The science of JiTAIs is young, and - as our user persona shows - behavioral scientists looking to work with JiTAIs are likely to run into many new concepts.
+The potential complexity of a JiTAI system, however, may benefit from the use of advanced and specialized graphs, charts, and user interfaces. 
+Thus, the needs of a novice user versus an expert user may be very different.
+Because of this, software to support JiTAI development needs to promote the development of expertise in both the system and the relevant concepts through steady changes to the user interface \cite{cockburn2014supporting}.
+In our case, a guided walkthrough of the software interface was sufficient, but we believe that a more graded approach to the complexity would be more effective. 
 
-We recommend that you produce a PDF version of your submission well
-before the final deadline.  Your PDF file must be ACM DL
-Compliant. The requirements for an ACM Compliant PDF are available at:
-{\url{http://www.sheridanprinting.com/typedept/ACM-distilling-settings.htm}}.
+\subsubsection{Enable Quick Iterations}
+%    ease-of-iteration to allow quick iteration
+%        changes easy and quick
+%        allow comparison between before/after change
+%        preserve modeling history, encourage undo/redo
+The value of iterating on a design spans many domains, and is very applicable to the development of JiTAIs. 
+Through our studies we have found that the development of even a simple JiTAI requires many iterations.
+Thus, a software to aid in JiTAI development must allow for quick and easy modification, comparison, and reversion.
+A comparison between the usage of our multi-staged model builder versus the single-page application showed a dramatic increase in the number of model iterations along with reported user comprehension.
+Iterations on the model tended to follow a moment of realization or the learning of a new concept.
+Thus, allowing for quick iterations allows for the user to more quickly apply newly gained expertise, yielding a better model and increased understanding.
 
-Test your PDF file by viewing or printing it with the same software we
-will use when we receive it, Adobe Acrobat Reader Version 10. This is
-widely available at no cost. Note that most
-reviewers will use a North American/European version of Acrobat
-reader, so please check your PDF accordingly.
+%     model-probing tools (time-series) to test that model fits mental model
+%        simulations
+%        data-reconciliation
+To encourage iteration in the JiTAI development process, assessment tools available part-way through the process - like our mini-simulation time-series - allow users to test their mental model of the system against its digital representation.
+Allowing for more assessment points throughout JiTAI development allows users to identify problems early so they may iterate before the error cascades further through the process.
 
-When creating your PDF from Word, ensure that you generate a tagged
-PDF from improved accessibility. This can be done by using the Adobe
-PDF add-in, also called PDFMaker. Select Acrobat | Preferences from
-the ribbon and ensure that ``Enable Accessibility and Reflow with
-tagged Adobe PDF'' is selected. You can then generate a tagged PDF by
-selecting ``Create PDF'' from the Acrobat ribbon.
+\subsubsection{High-Level Visuals to De-internalize Models}
+%    model state-storage & reference visuals to de-internalize mental model
+%        ease memory load
+%        externalize model computations
+Traditionally, psychological models of human behavior are meant to be guidelines for thinking about human behavior.
+When using these models, the researcher must internalize the model and think through the subject state.
+With JiTAI models, internalization of the full system becomes impossible due to the rise in specificity and complexity.
+Thus, JiTAI development software must provide visualizations of the system to ease cognitive load on the user.
+Focus plus context displays \cite{baudisch2001focus} can should be used to allow users to delve into the specifics of a portion of the model without losing the larger context. 
+In the behaviorSim Model Builder, we focus on the specification of a single variable at a time, and highlight this variable’s context in an information-flow path diagram of the model structure.
+This dual-viewing-area approach works well for comparing variable details, but the use of a zoomable interface such as is employed in some flow-based programming \cite{morrison2010flow} tools may be more intuitive.
+%    related design guides
+%        FBP
 
-\section{Conclusion}
+\subsubsection{Adaptive Interface}
+%    customizable interface & concept/model/data display tailored to research area
+Though our JiTAI developer persona yields widely applicable general user stories, it is also important to recognize the diversity of the JiTAI developer user group.
+JiTAIs are applicable to any area of behavior change; just a few popular proposed JiTAI applications are: management of eating behaviors, physical activity, smoking cessation, drug abuse, PTSD, and stress.
+Within each of these many application domains, are a myriad of behavioral theories - further adding to the diversity of the user group.
+Each of these sub-user-groups may have slightly different needs as they develop a JiTAI.
+Furthermore, a JiTAI development software requires a standardized behavioral model or JiTAI format, and with that comes the opportunity to enable easy sharing and searching of JiTAI designs.
+Thus, personalization of the software interface - to adapt the process or to offer relevant information\cite{kay2012creating} - can greatly improve user experience in this domain.
 
-It is important that you write for the SIGCHI audience. Please read
-previous years’ proceedings to understand the writing style and
-conventions that successful authors have used. It is particularly
-important that you state clearly what you have done, not merely what
-you plan to do, and explain how your work is different from previously
-published work, i.e., the unique contribution that your work makes to
-the field. Please consider what the reader will learn from your
-submission, and how they will find your work useful. If you write with
-these questions in mind, your work is more likely to be successful,
-both in being accepted into the conference, and in influencing the
-work of our field.
+\section{conclusion}
+TODO!
 
 \section{Acknowledgments}
 
-Sample text: We thank all the volunteers, and all publications support
-and staff, who wrote and provided helpful comments on previous
-versions of this document. Authors 1, 2, and 3 gratefully acknowledge
-the grant from NSF (\#1234--2012--ABC). \textit{This whole paragraph is
-  just an example.}
+TODO!
 
 % Balancing columns in a ref list is a bit of a pain because you
 % either use a hack like flushend or balance, or manually insert
