@@ -124,7 +124,7 @@ Lessons learned through iterations of this tool, a JiTAI developer user persona,
 % JiTAIs?
 % * what is the problem with current behavioral science research methods?
 With the increasing prevalence of wearable technologies and user-behavior collection, behavioral researchers are becoming increasingly overwhelmed with data.
-Researchers have seen the potential for optimizing a behavioral intervention to suit not only the user \cite{beck2010}, but also the context \cite{brailsford2010towards, collins2004}. 
+Researchers have seen the potential for optimizing a behavioral intervention to suit not only the user \cite{beck2010challenges}, but also the context \cite{brailsford2010towards, collins2004}. 
 Just-in-Time Adaptive Interventions (JiTAIs) promise to provide the optimal nudge at the optimal time to aid users looking to change their behavior \cite{nahum2014}.
 Imagine, for example, an anti-stress app which knows not to interrupt your work meetings, but also knows when to play your favorite song to help you relax on the drive home.
 Or consider a smoking cessation app that knows precisely when and where you are most likely to crave, and distracts you with a game before you realize you were about to want a cigarette.
@@ -204,7 +204,7 @@ The time-series viewer was found to be both critical for the development of an a
 
 % \subsection{behaviorSim Model-Building Tool v2}
 In an attempt to apply what we had learned so far, the behaviorSim Model Building tool was re-designed and re-assessed.
-In this version all steps of the modeling process (figure \ref{model-builder-stages})  are unified into a single-page application, allowing users to see how choices influence the model in real-time, and thus can iterate on their design more easily.
+In this version all steps of the modeling process (figure \ref{model-builder-v1})  are unified into a single-page application, allowing users to see how choices influence the model in real-time, and thus can iterate on their design more easily.
 The time-series charts popular in the tutorial were also added as a ``mini-simulation'', to help users to visualize how variables change over time according to their model formulation.
 To address the terminology gap which plagued v1, a set of tool-tips were added which revealed detailed definitions for key terms used in the user interface.
 % In addition, the second version incorporates findings from the v1 tutorial, adding a ``miniature simulation'' to the application to allow for ``reconciliation and ``play''.
@@ -220,7 +220,7 @@ Internal state and behavioral nodes are specified similarly to environmental inf
 \begin{figure}[!t]
   \centering
   \includegraphics[width=0.9\columnwidth]{img/v2}  
-  \caption{behaviorSim Model Builder v2 combines the think, draw, specify, and play elements into a single view.}
+  \caption{behaviorSim Model Builder v2 combines elements into a single view.}
   \label{model-builder-v2}
 \end{figure}
 
