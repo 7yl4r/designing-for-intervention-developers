@@ -127,8 +127,8 @@ Lessons learned through iterations of this tool, a JiTAI developer user persona,
 With the increasing prevalence of wearable technologies and personal health data, behavioral researchers are becoming increasingly overwhelmed with data.
 Researchers have seen the potential for optimizing a behavioral intervention to suit not only the user \cite{beck2010challenges}, but also the context \cite{brailsford2010towards, collins2004}. 
 Just-in-Time Adaptive Interventions (JiTAIs) promise to provide the optimal nudge at the optimal time to aid users looking to change their behavior \cite{nahum2014}.
-Imagine, for example, an anti-stress app which knows not to interrupt work meetings, but also knows when to play a favorite song to help relieve stress on the drive home.
-Or consider a smoking cessation app that knows precisely when and where craving is most likely, and distracts with a game before the desire to smoke is noticeable.
+Imagine, for example, an anti-stress application which knows not to interrupt work meetings, but also knows when to play a favorite song to help relieve stress on the drive home.
+Or consider a smoking cessation pap that knows precisely when and where craving is most likely, and distracts with a game before the desire to smoke is noticeable.
 
 The impending wave of context-aware\cite{schilit1994context}, affective computing\cite{picard2000affective} applications seems to be the holy grail of behavior change, but researchers are finding that our models of human behavior are not capable of supporting this level of interaction.
 Existing  models of behavior do not offer the granularity and specificity needed for these applications\cite{riley2011health}.
@@ -148,7 +148,7 @@ We also asked participants to complete survey items about the barriers facing mo
 Approximately 50 surveys were distributed following presentations on behavioral modeling and simulation at the 35th Annual Conference of the Society of Behavioral Medicine. 
 Out of these 50, only 12 surveys were returned.
 In general, users had trouble with even the simplified modeling exercise.
-Most did not stray far from the given example, and others provided very different solutions which could not be reconsiled with the ``engineer's view'' of the problem.
+Most did not stray far from the given example, and others provided very different solutions which could not be reconciled with the ``engineer's view'' of the problem.
 In the survey questions participants reported that the mathematics and programming concepts required for developing simulatable models were overwhelming, and nearly all participants expressed a desire for increased collaboration between disciplines and a need for software tools to help them apply and validate these methods.
 
 
@@ -170,7 +170,7 @@ Lastly, users are required to ``specify'' the functional relationships at each n
   \rule{\columnwidth}{0.4pt}
   3
   \includegraphics[width=0.9\columnwidth]{img/v1-specify}  
-  \caption{behaviorSim Model Builder v0.1.x implemented three separate stages of model building as separate pages: 1) think, 2) draw, 3) specify.}
+  \caption{behaviorSim Model Builder v1 implemented three separate stages of model building as separate pages: 1) think, 2) draw, 3) specify.}
   \label{model-builder-v1}
 \end{figure}
 
@@ -204,7 +204,7 @@ The time-series view was found to be both critical for the development of an acc
 
 % \subsection{behaviorSim Model-Building Tool v2}
 Using what we had learned so far, the behaviorSim Model Building tool was re-designed and re-assessed.
-In this version all steps of the modeling process (think, draw, specifiy) are unified into a single-page application, allowing users to see how choices influence the model in real-time, and thus can iterate on their design more easily (see figure \ref{model-builder-v2}).
+In this version all steps of the modeling process (think, draw, specify) are unified into a single-page application, allowing users to see how choices influence the model in real-time, and thus can iterate on their design more easily (see figure \ref{model-builder-v2}).
 The time-series charts popular in the tutorial were added as a ``mini-simulation'', to help users to visualize how variables change over time according to their model formulation.
 To address the terminology gap which plagued v1, a set of tool-tips were added which revealed detailed definitions for key terms used in the user interface.
 % In addition, the second version incorporates findings from the v1 tutorial, adding a ``miniature simulation'' to the application to allow for ``reconciliation and ``play''.
@@ -231,7 +231,7 @@ A think-aloud protocol was used while the software was in use, and the concludin
 
 Though the single-page design of version two did seem to allow for increased ability to iteratively explore models, reviewers now found the user interface somewhat overwhelming.
 % Upon starting the review, users often felt unsure where to start.
-Furthermore the connection between the information flow graphic and the related UI elements below was not always obvious.
+Furthermore the connection between the information flow graphic and the related interface elements below was not always obvious.
 % Reviewers did identify the relationship after some exploration, however. 
 Additionally, the common user interface for specifying constructs regardless of node type broke down the distinction between environmental inflows, state variables, and behavioral outputs. This lead to to some confusion when specifying the various types of nodes.
 Further contributing to this problem, the meaning of the mini-simulation was not always clear to reviewers, though the inclusion of time-series graphs was found helpful for understanding the model functions and their parameters once explained.
@@ -268,7 +268,7 @@ Statistical analysis techniques typically used to assess control vs experimental
 % propose user stories and use-case details for the task of JiTAI design and  evaluation
 % First and foremost JiTAI developers want to 
 
-\subsection{Guidelines for JiTAI Developer Softwar}
+\subsection{Guidelines for JiTAI Developer Software}
 % provide some generic design guidelines which we have found to be particularly relevant in this design space
 
 \subsubsection{Promote Expertise Development}
@@ -280,7 +280,7 @@ The science of JiTAIs is young, and - as our user persona shows - behavioral sci
 The potential complexity of a JiTAI system, however, may benefit from the use of advanced and specialized graphs, charts, and user interfaces. 
 Thus, the needs of a novice user versus an expert user may be very different.
 Because of this, software to support JiTAI development needs to promote the development of expertise in both the system and the relevant concepts through steady changes to the user interface \cite{cockburn2014supporting}.
-In our case, a guided walkthrough of the software interface was sufficient, but we believe that a more graded approach would be more effective. 
+In our case, a guided walk-through of the software interface was sufficient, but we believe that a more graded approach would be more effective. 
 
 \subsubsection{Enable Quick Iterations}
 %    ease-of-iteration to allow quick iteration
@@ -310,7 +310,7 @@ With JiTAI models, internalization of the full system becomes impossible due to 
 Thus, JiTAI development software must provide visualizations of the system to ease cognitive load on the user.
 Focus plus context displays \cite{baudisch2001focus} can be used to allow users to delve into the specifics of a portion of the model without losing the larger context. 
 In the behaviorSim Model Builder, we focus on the specification of a single variable at a time, and highlight this variable’s context in an information-flow path diagram of the model structure.
-This dual-viewing-area approach works well for comparing variable details, but the use of a zoomable interface such as is employed in some flow-based programming \cite{morrison2010flow} tools may be more intuitive.
+This dual-viewing-area approach works well for comparing variable details, but the use of a zoom-able interface such as is employed in some flow-based programming \cite{morrison2010flow} tools may be more intuitive.
 %    related design guides
 %        FBP
 
