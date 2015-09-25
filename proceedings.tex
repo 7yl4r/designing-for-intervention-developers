@@ -72,7 +72,7 @@
 % End of preamble. Here it comes the document.
 \begin{document}
 
-\title{BehaviorSim Model Builder: Lessons Learned Designing for JiTAI Developers}
+\title{Designing Tools for Behavioral Scientists in the Era of Just-in-Time Adaptive Interventions}
 
 \numberofauthors{5}
 \author{%
@@ -128,36 +128,43 @@ With the increasing prevalence of wearable technologies and personal health data
 Researchers have seen the potential for optimizing a behavioral intervention to suit not only the user \cite{dallery2014optimizing, beck2010challenges}, but also the context \cite{brailsford2010towards, collins2004}. 
 Just-in-Time Adaptive Interventions (JiTAIs) promise to provide the optimal nudge at the optimal time to aid users looking to change their behavior \cite{nahum2014}.
 Imagine, for example, an anti-stress application which knows not to interrupt work meetings, but also knows when to play a favorite song to help relieve stress on the drive home.
-Or consider a smoking cessation pap that knows precisely when and where craving is most likely, and distracts with a game before the desire to smoke is noticeable.
+Or consider a smoking cessation application that knows precisely when and where craving is most likely, and distracts with a game before the desire to smoke is noticeable.
 
 The impending wave of context-aware\cite{schilit1994context}, affective computing\cite{picard2000affective} applications seems to be the holy grail of behavior change, but researchers are finding that our models of human behavior are not capable of supporting this level of interaction.
 Existing  models of behavior do not offer the granularity and specificity needed for these applications\cite{riley2011health}.
 Currently, psychological models of human behavior act as a guide for behavioral scientists looking to predict behavior, but are rarely computational in nature - making direct application to adaptive systems impossible.
 Methods for creating computational models of human behavior are not well defined, but some early concepts have been published \cite{rivera2013systems}.
 
+In this paper, we present a summary of our methodology throughout iterations on the BehaviorSim Model Builder, which aims to be a behavioral-scientist-facing software for development of computational models of human behavior for use in JiTAIs.
+We present insights gained at each stage of the development process, followed by a discussion section which formulates generalizable knowledge from our specific lessons learned that may be of use to others designing JiTAI development support software, or those targeting behavioral scientists as a user group.
+
 % TODO: ADD THESE?:
 % b/c of ubiquitous mobile & sensor tech
 %    dynamical systems are good way to model at this level
 
 \section{Methodology}
-% SBM Survey 
+\subsection{Survey of Behavioral Scientists}
 A preliminary survey was given to a group of behavioral scientists in order to gauge the general perceptions and opinions on the development of behavioral models to support JiTAIs.
 In this survey we focused on a few key elements of the model building process to greatly simplify and shorten the modeling exercise.
 A contextual and behavioral outcome based on physical activity were given, and users efforts were focused on defining the inner workings of the human system within these constraints.
+Questions asked to describe the human system included asking participants to sketch a time-series representing their expectations, to list relevant constructs, and describe their constructs they relate to outcomes.
 We also asked participants to complete survey items about the barriers facing modeling and simulation in behavioral science.
 Approximately 50 surveys were distributed following presentations on behavioral modeling and simulation at the 35th Annual Conference of the Society of Behavioral Medicine. 
-Out of these 50, only 12 surveys were returned.
+Out of these 50, 12 surveys were returned.
 In general, users had trouble with even the simplified modeling exercise.
-Most did not stray far from the given example, and others provided very different solutions which could not be reconciled with the ``engineer's view'' of the problem.
+Most did not stray far from the given example, and others provided very different solutions which - although helpful for conveying an abstract description of their model - could not be reconciled with the modeling paradigm presented.
+That is, the solutions provided abstract descriptions of the model, but 
 In the survey questions participants reported that the mathematics and programming concepts required for developing simulatable models were overwhelming, and nearly all participants expressed a desire for increased collaboration between disciplines and a need for software tools to help them apply and validate these methods.
 
 
-% behaviorSim model-builder v1
+\subsection{BehaviorSim Model Builder v1}
 Using findings from the user study we developed a proof-of-concept software to aid behavioral researchers with the task of building a computational behavioral model. 
 The software - called the behaviorSim Model-Builder (see figure \ref{model-builder-v1}) - took a step-wise approach towards the model-building process.
 First users are asked to list environmental inflows, internal state variables, and behavioral outflows of the model explicitly during the ``think'' stage.
 Next, users are prompted to define the connections between nodes, ``draw''ing the model's structure.
 Lastly, users are required to ``specify'' the functional relationships at each node's inflow(s).
+As a very simple example, consider a simple model of physical activity (PA): firstly we can name social pressure (SP) as an environmental inflow, normative belief (NB) as an internal state variable, and step count (SC) as a behavioral outflow; next we specify connections $SP \rightarrow NB \rightarrow SC$; lastly, we can specify that the connections both represent simple linear relationships.
+
 % TODO: include graphic which shows context/state/behavioral as mentioned in P above?
 
 \begin{figure}[!t]
@@ -181,7 +188,7 @@ This design does not allow for quick iteration on models, and requires the user 
 % Though the information flow diagram employed in this version worked well to convey information about the model to the users, the graph was also assumed to be interactive - participants made attempts to modify the graph by clicking, and attempted to select nodes in the specification stage by clicking on them.
 Our review concluded that a less constrained approach to the stages of the modeling process was needed, and a greater focus on the graphical model could greatly improve user experience.
 
-% \subsection{behaviorSim Model-Building Tutorial v1}
+\subsection{BehaviorSim Model-Building Tutorial}
 After reviewing v1 of the behaviorSim Model Builder tool, a tutorial was designed to help bridge the knowledge gap for new modelers looking to use the tool.
 In theory, the tutorial would help users see the bigger picture before diving into the stepwise process.
 The tutorial was implemented as a walk-through of a simple example model's internals.
@@ -202,7 +209,7 @@ The time-series view was found to be both critical for the development of an acc
   \label{model-builder-tutorial}
 \end{figure}
 
-% \subsection{behaviorSim Model-Building Tool v2}
+\subsection{behaviorSim Model Builder v2}
 Using what we had learned so far, the behaviorSim Model Building tool was re-designed and re-assessed.
 In this version all steps of the modeling process (think, draw, specify) are unified into a single-page application, allowing users to see how choices influence the model in real-time, and thus can iterate on their design more easily (see figure \ref{model-builder-v2}).
 The time-series charts popular in the tutorial were added as a ``mini-simulation'', to help users to visualize how variables change over time according to their model formulation.
@@ -219,7 +226,7 @@ Internal state and behavioral measure nodes are specified similarly to environme
 
 \begin{figure}[!t]
   \centering
-  \includegraphics[width=0.9\columnwidth]{img/v2}  
+  \includegraphics[width=1\columnwidth]{img/v2}  
   \caption{behaviorSim Model Builder v2 combines elements into a single view.}
   \label{model-builder-v2}
 \end{figure}
@@ -238,7 +245,7 @@ Further contributing to this problem, the meaning of the mini-simulation was not
 Nodes on the graph were made to change color when the specification process was complete, but reviews revealed that this was not a significant enough indicator of node ``completeness'', so that the user is sometimes unsure when they should feel free to move to the next node.
 % Inclusion of a ``next node'' button which appears upon node specification completion may be all that is needed to help alleviate this issue.
 
-\section{Results}
+\section{Discussion}
 Our findings above reveal specific weaknesses in our design, and through analysis of these findings we present the following design guidelines for any software made to empower JiTAI developers.
 Firstly we outline a rough JiTAI developer user persona based on our assessment of the general population of researchers in behavioral intervention design.
 Next, we propose user stories and use-case details for the task of JiTAI design and evaluation.
@@ -258,6 +265,7 @@ Research questions focusing on the detailed dynamics of behavioral change are be
 % modeling turns story into equations
 The JiTAI developer wants to turn a patient story into a set of equations that can be handled by an automated system.
 However, JiTAI developers typically do not have the level of familiarity with modeling systems to define abstract psychological models mathematically.
+This is supported by our findings wherein we encounter more difficulty than expected using time-series as a common ground. 
 Furthermore, the psychological models commonly used are ill-specified at the (small) timescales of greatest interest, and often do not fit commonly used modeling paradigms - making mathematical definition a unique challenge for even a systems engineer.
 
 The JiTAI developer wants to deploy and test a hypothesis by comparing model predictions to experimental data.
@@ -278,6 +286,7 @@ Statistical analysis techniques typically used to assess control vs experimental
 %         existing data explorer to inspire/inform
 The science of JiTAIs is young, and - as our user persona shows - behavioral scientists looking to work with JiTAIs are likely to run into many new concepts.
 The potential complexity of a JiTAI system, however, may benefit from the use of advanced and specialized graphs, charts, and user interfaces. 
+%Additionally, we found overlapping terminologies to be a common pain point; meaning that users may not recognize the need to investigate the definition of a term.
 Thus, the needs of a novice user versus an expert user may be very different.
 Because of this, software to support JiTAI development needs to promote the development of expertise in both the system and the relevant concepts through steady changes to the user interface \cite{cockburn2014supporting}.
 In our case, a guided walk-through of the software interface was sufficient, but we believe that a more graded approach would be more effective. 
